@@ -30,7 +30,8 @@ void setup (void) {
     // Confirm this with a voltmeter or multimeter. Note that there is an inherent offset error of 1.2mV in the DACs
     DAC.vout(DAC_A, 3290);  // Voltage in mV
     DAC.vout(DAC_B, 10);    // Voltage in mV
-
+    
+    delay(5000);
     DAC.disable(DAC_A);
     delay(5000);
     DAC.enable(DAC_A);
