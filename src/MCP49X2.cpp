@@ -118,70 +118,6 @@ bool MCP49X2::begin(int8_t _cs, int8_t _ldac, int8_t _shdn) {
     return true;
 }
 
-void MCP49X2::gain(dac_channel_t channel, dac_gain_t gain) {
-    if (channel == DAC_A)
-        dacA.bits.gain = (gain == GAIN_1 ? 1 : 0);
-    else if (channel == DAC_B)
-        dacB.bits.gain = (gain == GAIN_1 ? 1 : 0);
-    write(channel);
-}
-
-void MCP49X2::enable(dac_channel_t channel) {
-    if (channel == DAC_A)
-        dacA.bits.shdn = 1;
-    else if (channel == DAC_B)
-        dacB.bits.shdn = 1;
-    write(channel);
-}
-
-void MCP49X2::disable(dac_channel_t channel) {
-    if (channel == DAC_A)
-        dacA.bits.shdn = 0;
-    else if (channel == DAC_B)
-        dacB.bits.shdn = 0;
-    write(channel);
-}
-
-void MCP49X2::disable(void) {
-    disable(DAC_A);
-    disable(DAC_B);
-    if (shdn >= 0) {
-        digitalWrite(shdn, LOW);
-    }
-}
-
-void MCP49X2::enable(void) {
-    enable(DAC_A);
-    enable(DAC_B);
-    if (shdn >= 0) {
-        digitalWrite(shdn, HIGH);
-    }
-}
-
-void MCP49X2::latch(void) {
-    if (ldac >= 0) {
-        digitalWrite(ldac, LOW);
-        delayMicroseconds(1);
-        digitalWrite(ldac, HIGH);
-    }
-}
-
-void MCP49X2::enable_buffer(dac_channel_t channel) {
-    if (channel == DAC_A)
-        dacA.bits.buf = 1;
-    else if (channel == DAC_B)
-        dacB.bits.buf = 1;
-    write(channel);
-}
-
-void MCP49X2::disable_buffer(dac_channel_t channel) {
-    if (channel == DAC_A)
-        dacA.bits.buf = 0;
-    else if (channel == DAC_B)
-        dacB.bits.buf = 0;
-    write(channel);
-}
-
 void MCP49X2::vout(dac_channel_t channel, uint16_t mV) {
     if (channel == DAC_A) {
         vouta = mV;
@@ -265,13 +201,20 @@ void MCP49X2::write(dac_channel_t channel) {
     spi->endTransaction();
 }
 
-uint16_t MCP49X2::read(dac_channel_t channel) {
-    if (channel == DAC_A)
-        return vouta;
-    else
-        return voutb;
+void MCP49X2::disable(void) {
+    disable(DAC_A);
+    disable(DAC_B);
+    if (shdn >= 0) {
+        digitalWrite(shdn, LOW);
+    }
 }
 
-void MCP49X2::end(void) {
-    disable();
+void MCP49X2::enable(void) {
+    if (shdn >= 0) {
+        digitalWrite(shdn, HIGH);
+    }
+    enable(DAC_A);
+    enable(DAC_B);
+    vout(DAC_A, vouta);
+    vout(DAC_B, voutb);
 }

@@ -110,19 +110,72 @@ class MCP49X2 {
     void set_spi(SPIClass& _spi);
     void protocol(SPISettings& _settings);
     void protocol(uint32_t frequency=MCP49X2_DEFAULT_SPI_FREQUENCY, uint8_t bitorder=MCP49X2_DEFAULT_SPI_BITORDER, uint8_t mode=MCP49X2_DEFAULT_SPI_DATAMODE);
-    inline void gain(dac_channel_t channel, dac_gain_t gain);
-    inline void enable(dac_channel_t channel);
-    inline void disable(dac_channel_t channel);
-    inline void disable(void);
-    inline void enable(void);
-    inline void latch(void);
-    inline void enable_buffer(dac_channel_t channel);
-    inline void disable_buffer(dac_channel_t channel);
+    
     void vout(dac_channel_t channel, uint16_t mV);
     void write(dac_channel_t channel, uint16_t data);
     void write(dac_channel_t channel);
-    uint16_t read(dac_channel_t channel); // This doesn't read form the DACs but returns the last value written to the DAC. It acts like a buffer
-    inline void end(void);
+    void disable(void);
+    void enable(void);
+    
+    inline void gain(dac_channel_t channel, dac_gain_t gain) { \
+        if (channel == DAC_A) \
+            dacA.bits.gain = (gain == GAIN_1 ? 1 : 0); \
+        else if (channel == DAC_B) \
+            dacB.bits.gain = (gain == GAIN_1 ? 1 : 0); \
+        write(channel); \
+    }; \
+    
+    inline void enable(dac_channel_t channel) { \
+        if (channel == DAC_A) \
+            dacA.bits.shdn = 1; \
+        else if (channel == DAC_B) \
+            dacB.bits.shdn = 1; \
+        write(channel); \
+    }; \
+
+    inline void disable(dac_channel_t channel) { \
+        if (channel == DAC_A) \
+            dacA.bits.shdn = 0; \
+        else if (channel == DAC_B) \
+            dacB.bits.shdn = 0; \
+        write(channel); \
+    }; \
+    
+    inline void latch(void) { \
+        if (ldac >= 0) { \
+            digitalWrite(ldac, LOW); \
+            delayMicroseconds(1); \
+            digitalWrite(ldac, HIGH); \
+        } \
+    }; \
+    
+    inline void enable_buffer(dac_channel_t channel) { \
+        if (channel == DAC_A) \
+            dacA.bits.buf = 1; \
+        else if (channel == DAC_B) \
+            dacB.bits.buf = 1; \
+        write(channel); \
+    }; \
+    
+    inline void disable_buffer(dac_channel_t channel) { \
+        if (channel == DAC_A) \
+            dacA.bits.buf = 0; \
+        else if (channel == DAC_B) \
+            dacB.bits.buf = 0; \
+        write(channel); \
+    }; \
+    
+    // This doesn't read form the DACs but returns the last value written to the DAC. It acts like a buffer
+    inline uint16_t read(dac_channel_t channel) { \
+        if (channel == DAC_A) \
+            return vouta; \
+        else
+            return voutb; \
+    }; \
+    
+    inline void end(void) { \
+        disable(); \
+    }; \
 
   private:
     SPISettings settings;
