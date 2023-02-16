@@ -1,4 +1,4 @@
-/* This example show how to use the MCP49X2 DAC Series (MCP4902, MCP4912 and MCP4922)
+/* This example shows how to use the MCP49X2 DAC Series (MCP4902, MCP4912 and MCP4922)
    from Microchip Inc. to produce 2 variable voltage outputs using its dual DAC (DAC_A & DAC_B) channels.
 
    Created by Elochukwu Ifediora on Jan. 19, 2023
