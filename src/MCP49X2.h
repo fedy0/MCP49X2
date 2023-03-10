@@ -173,7 +173,7 @@ class MCP49X2 {
             return voutb; \
     }; \
     
-    inline void vref(dac_channel_t channel, uint16_t mV); { \
+    inline void vref(dac_channel_t channel, uint16_t mV) { \
         if (channel == DAC_A) \
             vrefa = mV; \
         else
