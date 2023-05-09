@@ -47,7 +47,8 @@ extern "C" {
 #endif
 
 // Uncomment the code line just below if you want to make the MCP49X2 chip select pin an active high pin
-//#define MCP49X2_ACTIVE_HIGH_CS_PIN
+#define MCP49X2_ACTIVE_HIGH_CS_PIN
+//#define MCP49X2_THREE_WIRE_SPI_INTERFACE
 
 #define MCP49X2_DEFAULT_SPI            SPI
 #define MCP49X2_DEFAULT_SPI_FREQUENCY  20000000

@@ -62,7 +62,7 @@ void MCP49X2::protocol(uint32_t frequency, uint8_t bitorder, uint8_t mode) {
 }
 
 bool MCP49X2::begin(int8_t _cs, int8_t _ldac, int8_t _shdn) {
-
+#ifndef MCP49X2_THREE_WIRE_SPI_INTERFACE
     if (_cs >= 0) {
         cs = _cs;
         pinMode(cs, OUTPUT);
@@ -74,6 +74,7 @@ bool MCP49X2::begin(int8_t _cs, int8_t _ldac, int8_t _shdn) {
     }
     else
         return false; // CS pin must be set; it is not optional
+#endif
 
     if (_ldac >= 0) {
         ldac = _ldac;
@@ -137,11 +138,14 @@ void MCP49X2::vout(dac_channel_t channel, uint16_t mV) {
 
 void MCP49X2::write(dac_channel_t channel, uint16_t data) {
     spi->beginTransaction(settings);
+
+#ifndef MCP49X2_THREE_WIRE_SPI_INTERFACE
     #ifdef MCP49X2_ACTIVE_HIGH_CS_PIN
     digitalWrite(cs, HIGH);
     #else
     digitalWrite(cs, LOW);
     #endif
+#endif
 
     if (channel == DAC_A) {
         if (dac_type == MCP4902)
@@ -160,21 +164,27 @@ void MCP49X2::write(dac_channel_t channel, uint16_t data) {
         spi->transfer(data);
     }
 
+#ifndef MCP49X2_THREE_WIRE_SPI_INTERFACE
     #ifdef MCP49X2_ACTIVE_HIGH_CS_PIN
     digitalWrite(cs, LOW);
     #else
     digitalWrite(cs, HIGH);
     #endif
+#endif
+
     spi->endTransaction();
 }
 
 void MCP49X2::write(dac_channel_t channel) {
     spi->beginTransaction(settings);
+
+#ifndef MCP49X2_THREE_WIRE_SPI_INTERFACE
     #ifdef MCP49X2_ACTIVE_HIGH_CS_PIN
     digitalWrite(cs, HIGH);
     #else
     digitalWrite(cs, LOW);
     #endif
+#endif
 
     if (channel == DAC_A) {
         if (dac_type == MCP4902)
@@ -192,12 +202,15 @@ void MCP49X2::write(dac_channel_t channel) {
         spi->transfer(dacB.reg >> 8);
         spi->transfer(dacB.reg);
     }
-
+    
+#ifndef MCP49X2_THREE_WIRE_SPI_INTERFACE
     #ifdef MCP49X2_ACTIVE_HIGH_CS_PIN
     digitalWrite(cs, LOW);
     #else
     digitalWrite(cs, HIGH);
     #endif
+#endif
+
     spi->endTransaction();
 }
 
